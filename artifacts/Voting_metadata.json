@@ -66,12 +66,6 @@
 			},
 			{
 				"anonymous": false,
-				"inputs": [],
-				"name": "VoteIsOver",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
 				"inputs": [
 					{
 						"indexed": false,
@@ -331,11 +325,11 @@
 	},
 	"sources": {
 		"Voting.sol": {
-			"keccak256": "0xf4d0d13fa8c6089e09788b5c1320ece1429767eda310642339716d70886dede2",
+			"keccak256": "0x097a845365bf6a35f44912ac29d91d2aee3a25b59f673c3669c33b12d23365f7",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://12e2085a3aebdaffc8d5d2652a8e0556d7561202f680fa7a504be4a8e5623eb6",
-				"dweb:/ipfs/QmQDxYBHEsiCzQ3jMBsacX7bcUNvrM8KfLN1afUvwnk42Z"
+				"bzz-raw://101a0aa489467a99a8d5735ad96bd5caf172fdd7ffaf909f53ab262d23e7da8b",
+				"dweb:/ipfs/QmNz7QpCGjLJ6n5XeDKeHro9C43pLBKX5VyBd2B2AUDAC1"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {

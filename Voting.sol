@@ -9,7 +9,6 @@ contract Voting is Ownable {
     event WorkflowStatusChange(WorkflowStatus previousStatus, WorkflowStatus newStatus);
     event ProposalRegistered(uint proposalId);
     event Voted(address voter, uint proposalId);
-    event VoteIsOver();
 
     uint private winningProposalId;
 
@@ -120,6 +119,15 @@ contract Voting is Ownable {
     }
 
     function getWinner() external votesTallied returns (Proposal memory) {
+        uint maxVoteCount = 0;
+        for (uint i=0; i<proposals.length; i++) {
+            Proposal memory proposal = proposals[i];
+            if (proposal.voteCount > maxVoteCount) {
+                winningProposalId = proposal.id;
+                maxVoteCount = proposal.voteCount;
+            }
+        }
 
+        return proposals[winningProposalId];
     }
 }
