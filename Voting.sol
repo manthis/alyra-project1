@@ -27,9 +27,13 @@ contract Voting is Ownable {
     }
 
     struct Proposal {
+        uint id;
         string description;
         uint voteCount;
     }
+
+    Proposal[] proposals;
+    uint proposalId = 0;
 
     enum WorkflowStatus {
         RegisteringVoters,
@@ -93,6 +97,14 @@ contract Voting is Ownable {
         emit VoterRegistered(_address);
     }
 
+    function addProposal(string calldata _proposal) external onlyVoters registeringProposals {
+        proposals.push(Proposal(proposalId, _proposal, 0));
+        emit ProposalRegistered(proposalId++);
+    }
+
+    function getProposals() external view returns (Proposal[] memory) {
+        return proposals;
+    }
 
     function getWinner() external votesTallied returns (address) {
 

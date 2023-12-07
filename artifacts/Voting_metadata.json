@@ -124,6 +124,19 @@
 			{
 				"inputs": [
 					{
+						"internalType": "string",
+						"name": "_proposal",
+						"type": "string"
+					}
+				],
+				"name": "addProposal",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "_address",
 						"type": "address"
@@ -132,6 +145,36 @@
 				"name": "addVoter",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getProposals",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "voteCount",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Voting.Proposal[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -258,11 +301,11 @@
 	},
 	"sources": {
 		"Voting.sol": {
-			"keccak256": "0xc626a31abbc00e8a99aa31f57361fc3fe9ec4e247c9b98e9f7eb9092b68a39b1",
+			"keccak256": "0x35684e1503049fdf6a2469823cc6926f0326a4b23c2be014dc2b528943258fe9",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://013a5b63d012901eb1335bcf3e36cc426bfcc7eb82cf3940e3a7ba5b8addd78b",
-				"dweb:/ipfs/QmNzNKzksbRQnD3HnjWjVbFzpgiCwZxZzDKU7CR4XXXmAD"
+				"bzz-raw://f8b8ba52a7ca939cb2fef912fe9ce8c53081a99d63bb042b480cb67137000ef4",
+				"dweb:/ipfs/Qma7trmvFBFsNKRXs25b5ERaYhESRox1wWCbaFtbk81nza"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {
