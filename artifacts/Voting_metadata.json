@@ -125,7 +125,7 @@
 				"inputs": [
 					{
 						"internalType": "string",
-						"name": "_proposal",
+						"name": "_description",
 						"type": "string"
 					}
 				],
@@ -195,9 +195,26 @@
 				"name": "getWinner",
 				"outputs": [
 					{
-						"internalType": "address",
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "voteCount",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Voting.Proposal",
 						"name": "",
-						"type": "address"
+						"type": "tuple"
 					}
 				],
 				"stateMutability": "nonpayable",
@@ -246,6 +263,19 @@
 					}
 				],
 				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_proposalId",
+						"type": "uint256"
+					}
+				],
+				"name": "vote",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -301,11 +331,11 @@
 	},
 	"sources": {
 		"Voting.sol": {
-			"keccak256": "0x35684e1503049fdf6a2469823cc6926f0326a4b23c2be014dc2b528943258fe9",
+			"keccak256": "0xf4d0d13fa8c6089e09788b5c1320ece1429767eda310642339716d70886dede2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f8b8ba52a7ca939cb2fef912fe9ce8c53081a99d63bb042b480cb67137000ef4",
-				"dweb:/ipfs/Qma7trmvFBFsNKRXs25b5ERaYhESRox1wWCbaFtbk81nza"
+				"bzz-raw://12e2085a3aebdaffc8d5d2652a8e0556d7561202f680fa7a504be4a8e5623eb6",
+				"dweb:/ipfs/QmQDxYBHEsiCzQ3jMBsacX7bcUNvrM8KfLN1afUvwnk42Z"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {

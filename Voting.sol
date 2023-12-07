@@ -26,6 +26,11 @@ contract Voting is Ownable {
         _;
     }
 
+    modifier VoteOnce() {
+        require(voters[msg.sender].hasVoted == false, "You already voted!");
+        _;
+    }
+
     struct Proposal {
         uint id;
         string description;
@@ -97,8 +102,8 @@ contract Voting is Ownable {
         emit VoterRegistered(_address);
     }
 
-    function addProposal(string calldata _proposal) external onlyVoters registeringProposals {
-        proposals.push(Proposal(proposalId, _proposal, 0));
+    function addProposal(string calldata _description) external onlyVoters registeringProposals {
+        proposals.push(Proposal(proposalId, _description, 0));
         emit ProposalRegistered(proposalId++);
     }
 
@@ -106,7 +111,15 @@ contract Voting is Ownable {
         return proposals;
     }
 
-    function getWinner() external votesTallied returns (address) {
+    function vote(uint _proposalId) external onlyVoters votingProposals VoteOnce {
+        proposals[_proposalId].voteCount++;
+        voters[msg.sender].hasVoted = true;
+        voters[msg.sender].votedProposalId = proposals[_proposalId].id;
+
+        emit Voted(msg.sender, voters[msg.sender].votedProposalId);
+    }
+
+    function getWinner() external votesTallied returns (Proposal memory) {
 
     }
 }
