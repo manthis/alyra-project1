@@ -1,4 +1,4 @@
-# Alyra : Project 1 - Système de Vote
+# ⚡️ Alyra : Project 1 - Système de Vote
 
 Un smart contract de vote peut être simple ou complexe, selon les exigences des élections que vous souhaitez soutenir. Le vote peut porter sur un petit nombre de propositions (ou de candidats) présélectionnées, ou sur un nombre potentiellement important de propositions suggérées de manière dynamique par les électeurs eux-mêmes.
 
@@ -42,3 +42,23 @@ Voici le déroulement de l'ensemble du processus de vote :
     }
   ```
 - Votre smart contract doit définir une énumération qui gère les différents états d’un vote
+  ```js
+    enum WorkflowStatus {
+      RegisteringVoters,
+      ProposalsRegistrationStarted,
+      ProposalsRegistrationEnded,
+      VotingSessionStarted,
+      VotingSessionEnded,
+      VotesTallied
+    }
+  ```
+- Votre smart contract doit définir un uint *winningProposalId* qui représente l’id du gagnant ou une fonction *getWinner* qui retourne le gagnant.
+- Votre smart contract doit importer le smart contract la librairie “Ownable” d’OpenZepplin.
+- Votre smart contract doit définir les événements suivants :
+  ```js
+    event VoterRegistered(address voterAddress); 
+    event WorkflowStatusChange(WorkflowStatus previousStatus, WorkflowStatus newStatus);
+    event ProposalRegistered(uint proposalId);
+    event Voted (address voter, uint proposalId);
+  ```
+  
