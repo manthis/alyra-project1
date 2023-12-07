@@ -6,11 +6,6 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [],
-				"stateMutability": "nonpayable",
-				"type": "constructor"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -52,109 +47,6 @@
 				"type": "event"
 			},
 			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "proposalId",
-						"type": "uint256"
-					}
-				],
-				"name": "ProposalRegistered",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [],
-				"name": "VoteIsOver",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "address",
-						"name": "voter",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "proposalId",
-						"type": "uint256"
-					}
-				],
-				"name": "Voted",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "address",
-						"name": "voterAddress",
-						"type": "address"
-					}
-				],
-				"name": "VoterRegistered",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "enum Voting.WorkflowStatus",
-						"name": "previousStatus",
-						"type": "uint8"
-					},
-					{
-						"indexed": false,
-						"internalType": "enum Voting.WorkflowStatus",
-						"name": "newStatus",
-						"type": "uint8"
-					}
-				],
-				"name": "WorkflowStatusChange",
-				"type": "event"
-			},
-			{
-				"inputs": [],
-				"name": "getVoteStep",
-				"outputs": [
-					{
-						"internalType": "enum Voting.WorkflowStatus",
-						"name": "",
-						"type": "uint8"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "getWinner",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "nextVoteStep",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [],
 				"name": "owner",
 				"outputs": [
@@ -175,13 +67,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "restartVote",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -196,6 +81,7 @@
 			}
 		],
 		"devdoc": {
+			"details": "Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions. The initial owner is set to the address provided by the deployer. This can later be changed with {transferOwnership}. This module is used through inheritance. It will make available the modifier `onlyOwner`, which can be applied to your functions to restrict their use to the owner.",
 			"errors": {
 				"OwnableInvalidOwner(address)": [
 					{
@@ -210,6 +96,9 @@
 			},
 			"kind": "dev",
 			"methods": {
+				"constructor": {
+					"details": "Initializes the contract setting the address provided by the deployer as the initial owner."
+				},
 				"owner()": {
 					"details": "Returns the address of the current owner."
 				},
@@ -230,7 +119,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Voting.sol": "Voting"
+			".deps/github/OpenZeppelin/openzeppelin-contracts/contracts/access/Ownable.sol": "Ownable"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -244,15 +133,7 @@
 		"remappings": []
 	},
 	"sources": {
-		"Voting.sol": {
-			"keccak256": "0x50276fdeec22d1c806b314fdcba7bba71de05162a3d0c632696b730238c9e230",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://ec52b579e2c1c287339732e3ecf2d637e2ca2961d820e9392e359cc3af5eb2ae",
-				"dweb:/ipfs/QmVrgTpKC7eeYGfKu3LC9La9rEhW8UUiDuHLaCbgYi3wNA"
-			]
-		},
-		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {
+		".deps/github/OpenZeppelin/openzeppelin-contracts/contracts/access/Ownable.sol": {
 			"keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
 			"license": "MIT",
 			"urls": [
@@ -260,7 +141,7 @@
 				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
 			]
 		},
-		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Context.sol": {
+		".deps/github/OpenZeppelin/openzeppelin-contracts/contracts/utils/Context.sol": {
 			"keccak256": "0x75a4ee64c68dbd5f38bddd06e664a64c8271b4caa554fb6f0607dfd672bb4bf3",
 			"license": "MIT",
 			"urls": [
