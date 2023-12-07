@@ -11,10 +11,19 @@ contract Voting is Ownable {
     event Voted(address voter, uint proposalId);
     event VoteIsOver();
 
+    uint private winningProposalId;
+
     struct Voter {
         bool isRegistered;
         bool hasVoted;
         uint votedProposalId;
+    }
+
+    mapping (address => Voter) voters;
+
+    modifier onlyVoters() {
+        require(voters[msg.sender].isRegistered == true, "You are not a valid voter!");
+        _;
     }
 
     struct Proposal {
@@ -30,8 +39,7 @@ contract Voting is Ownable {
         VotingSessionEnded,
         VotesTallied
     }
-
-    uint private winningProposalId;
+    
     WorkflowStatus private currentVoteState;    
 
     modifier votesTallied() {
@@ -45,17 +53,17 @@ contract Voting is Ownable {
     }
 
     modifier registeringVoters() {
-        require(currentVoteState == WorkflowStatus.RegisteringVoters, "Registering voters presently.");
+        require(currentVoteState == WorkflowStatus.RegisteringVoters, "You cannot register voters.");
         _;
     }
 
     modifier registeringProposals() {
-        require(currentVoteState == WorkflowStatus.ProposalsRegistrationStarted, "Registering propositions presently.");
+        require(currentVoteState == WorkflowStatus.ProposalsRegistrationStarted, "You cannot register proposals.");
         _;
     }
 
     modifier votingProposals() {
-        require(currentVoteState == WorkflowStatus.VotingSessionStarted, "Registering voters presently.");
+        require(currentVoteState == WorkflowStatus.VotingSessionStarted, "You cannot vote proposals.");
         _;
     }
 
@@ -80,7 +88,10 @@ contract Voting is Ownable {
         currentVoteState = WorkflowStatus.RegisteringVoters;
     }
 
-
+    function addVoter(address _address) external onlyOwner registeringVoters {
+        voters[_address].isRegistered = true;
+        emit VoterRegistered(_address);
+    }
 
 
     function getWinner() external votesTallied returns (address) {

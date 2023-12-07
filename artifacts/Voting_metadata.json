@@ -122,6 +122,19 @@
 				"type": "event"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_address",
+						"type": "address"
+					}
+				],
+				"name": "addVoter",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "getVoteStep",
 				"outputs": [
@@ -245,11 +258,11 @@
 	},
 	"sources": {
 		"Voting.sol": {
-			"keccak256": "0x50276fdeec22d1c806b314fdcba7bba71de05162a3d0c632696b730238c9e230",
+			"keccak256": "0xc626a31abbc00e8a99aa31f57361fc3fe9ec4e247c9b98e9f7eb9092b68a39b1",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://ec52b579e2c1c287339732e3ecf2d637e2ca2961d820e9392e359cc3af5eb2ae",
-				"dweb:/ipfs/QmVrgTpKC7eeYGfKu3LC9La9rEhW8UUiDuHLaCbgYi3wNA"
+				"bzz-raw://013a5b63d012901eb1335bcf3e36cc426bfcc7eb82cf3940e3a7ba5b8addd78b",
+				"dweb:/ipfs/QmNzNKzksbRQnD3HnjWjVbFzpgiCwZxZzDKU7CR4XXXmAD"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {
