@@ -6,7 +6,6 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 /**
 *   @title  Voting contrat: this contract allow a whitelist of voters to vote for their favorite proposition.
 *   @author Maxime AUBURTIN
-*   @notice You can use this contract for only the most basic simulation
 */
 contract VotingPlus is Ownable {
 

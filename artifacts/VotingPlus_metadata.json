@@ -349,7 +349,6 @@
 					"notice": "=================================================================================================================================================================== Smart Contract methods***================================================================================================================================================================="
 				}
 			},
-			"notice": "You can use this contract for only the most basic simulation",
 			"version": 1
 		}
 	},
@@ -370,11 +369,11 @@
 	},
 	"sources": {
 		"VotingPlus.sol": {
-			"keccak256": "0x884757b58de128a606e58dd4bc68fd0cf8f6cb96bccaa0a098a2fa6b0a41d32b",
+			"keccak256": "0x3e4f00143b4771394f7481e9c82e6e1dc5ff10ee94f7590b21ee63fe82615386",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9d197686842778ff38986ce1ef27a1a94188510d3a265c89a78d6e57ee1871ec",
-				"dweb:/ipfs/QmXyJFPyAkcuzAoDMsEAnjBh5qr12eAACYD9uaFPEtK7S7"
+				"bzz-raw://86065de8dfa2a5058848d824b7769d4448820be63f7abe33e9405b4e470ba7a6",
+				"dweb:/ipfs/QmaC1cAuc6XAW9uRnMhU1RxcvEtbnKme1YzB5xM4dkh1dL"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {
