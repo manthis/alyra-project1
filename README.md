@@ -65,34 +65,35 @@ Voici le déroulement de l'ensemble du processus de vote :
 
   # ⚡️ Talking about this project
 
-  Here is how I have proceed to build the voting contract:
-  1. I started with the state machine which is the most complex part of this contract. The idea was to keep it as simple as possible.
-  2. I then implemented the different methods in order to fulfill the contract specifications provided above.
+  ## Voting.sol
 
-  
-  👉 Most of the errors are not handled programmatically but left to the EVM. Ex:
+  I started this journey by implementing the Voting.sol version of this smart contract. This contract handles basic requirements provided in the subject.
+  I started by implementing the machine state and then the different operations and controls.
 
+  👉  Most of the errors are not handled programmatically but left to the EVM for this version which means than rather implementing all controls I have left some errors being handled by the EVM rather than me. For example, I do not control the bounds of the propositions array when a user vote for a proposition with its ID.
 
   👉 Concerning winners: this smart contract does not handle equality between propositions and will select the first one with the highest score as the winner.
-
-
-  ## Identified issues with a voting contract
-
-  Below is a list of all the corner cases of a vote we would need to handle to make this contract perfect:
-
-  - Handle equality: two propositions cannot be equal, if we find an equality we must vote again but for the equal propositions only
-  - Handle errors: vote for an non existing proposition, move to a state of the state machine which does not exist, etc.
-  - Admin should not be able to be a voter and vote
-  - We should not be able to pass to next machine state if we don't have 3 voters after registering voters, if we don't have 2 propositions after registering propositions 
-    or if we don't have at least 1 vote when registering votes (these figures can of course be changed)
-  - We should remove states which are useless from the state machine
-  - We should only be able to vote once
-  - A voter should be able to delegate its vote
-  - People should be able to count for themselves and see if the results of the vote is true
-  - A voter should not be able to vote for a proposition which does not exist
-  - Once the vote is complete we should be able to reinstanciate a new voting session
-
   
-  👉 We have implemented all theses additional feature in the VotingPlus.sol file. Please look at it.
+  ## VotingPlus.sol
 
-  ## Exemple of voting session
+  To work on a most advanced version of Voting.sol I have created VotingPlus.sol which takes the same basics but adds a few feature to the voting system.
+
+  Here is a list of added features:
+
+  - __The smart contract handles equality__. In this version of the smart contract, several proposition can be ex equo. Thus they will be listed when calling getWinner function. In order to solve this equality, the admin will have to call processEquality contract method. The processEquality method will reset the votes, remove all the propositions but those which are equal, and voters will be able to vote again to break the tie.
+  - __All errors are now handled__
+  - __Admin cannot be added as a voter__ anymore in order to not influence the vote and in order to not mix responsabilities between admin and voter roles.
+  - __Voter can delegate its vote__ to an existing voter or to a new voter. He must use the delegateVote function to do so while the admin is registering voters. Once voters are registered and voters start registering proposition, vote delegation won't be possible anymore.
+  - __Threshold have been added between state machine steps (these figures can be changed using the appropriate modifiers)
+      - 3 voters at least are required to validate RegisteringVoters state
+      - 2 propositions at least are required to validate ProposalsRegistration state
+      - 1 vote at least is required to end VotingSession state
+  - __Useless states have been removed__
+  - __Voters can only vote once__ unless another voter delegated them a voice
+  - Propositions can be listed (id, description, voteCount)
+  - Once the vote workflow is complete we can now start a new vote using restartVoteWorkflow.
+
+  ## Source code
+
+  👉 All source code has been documented or is otherwise self explanatory. Please look at it for further details.
+  
