@@ -61,4 +61,38 @@ Voici le déroulement de l'ensemble du processus de vote :
     event ProposalRegistered(uint proposalId);
     event Voted (address voter, uint proposalId);
   ```
+  ___ 
+
+  # ⚡️ Talking about this project
+
+  Here is how I have proceed to build the voting contract:
+  1. I started with the state machine which is the most complex part of this contract. The idea was to keep it as simple as possible.
+  2. I then implemented the different methods in order to fulfill the contract specifications provided above.
+
   
+  👉 Most of the errors are not handled programmatically but left to the EVM. Ex: the state machine doesn't control its bounds. If it is required to move to
+  a step which does not exist (an unknown index of the table), an error occurs and is handled by the EVM.
+
+
+  👉 Concerning winners: this smart contract does not handle equality between propositions and will select the first one with the highest score as the winner.
+
+
+  ## Identified issues with a voting contract
+
+  Below is a list of all the corner cases of a vote we would need to handle to make this contract perfect:
+  
+  - Handle equality: two propositions cannot be equal, if we find an equality we must vote again but for the equal propositions only
+  - Handle errors: vote for an non existing proposition, move to a state of the state machine which does not exist, etc.
+  - Admin should not be able to be a voter
+  - We should not be able to pass to next machine state if we don't have voters, if we don't have proposals or if we don't have votes
+  - We should remove states which are useless from the state machine
+  - We should only be able to vote once
+  - A voter should be able to delegate its vote
+  - A voter should be able to cancel or modify its vote
+  - A voter should be able to emit a blank vote
+  - People should be able to count for themselves and see if the result of the vote is true
+  - A voter should not be able to vote for a proposition which does not exist
+  - Once the vote is complete we should be able to reinstanciate a new voting session
+
+  
+  👉 We have implemented all theses additional feature in the VotingPlus.sol file. Please look at it.

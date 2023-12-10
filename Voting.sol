@@ -3,42 +3,76 @@ pragma solidity 0.8.23;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
+/**
+*   @title  Voting contrat: this contract allow a whitelist of voters to vote for their favorite proposition.
+*   @author Maxime AUBURTIN
+*   @notice You can use this contract for only the most basic simulation
+*   @dev    All corner cases of a vote are not handled in this version also there is no egality, the first vote which has
+*           the maximum voices wins.
+*/
 contract Voting is Ownable {
 
+    /**
+    * Events
+    */
     event VoterRegistered(address voterAddress); 
     event WorkflowStatusChange(WorkflowStatus previousStatus, WorkflowStatus newStatus);
     event ProposalRegistered(uint proposalId);
     event Voted(address voter, uint proposalId);
 
+    /**
+    * Id of the winning proposal
+    */
     uint private winningProposalId;
 
+    /**
+    * Voter structure
+    */
     struct Voter {
         bool isRegistered;
         bool hasVoted;
         uint votedProposalId;
     }
 
+    /**
+    * Voters whitelist
+    */
     mapping (address => Voter) voters;
 
+    /**
+    * Modifier to allow only voters
+    */
     modifier onlyVoters() {
         require(voters[msg.sender].isRegistered == true, "You are not a valid voter!");
         _;
     }
 
+    /**
+    * Modifier to only allow a unique vote
+    */
     modifier VoteOnce() {
         require(voters[msg.sender].hasVoted == false, "You already voted!");
         _;
     }
 
+    /**
+    * Proposal structure
+    */
     struct Proposal {
         uint id;
         string description;
         uint voteCount;
     }
 
+    /**
+    * List of proposals and proposal counter to create proposal id
+    */
     Proposal[] proposals;
-    uint proposalId = 0;
+    uint proposalIdCounter = 0;
 
+    /**
+    * Steps of the state machine
+    */
     enum WorkflowStatus {
         RegisteringVoters,
         ProposalsRegistrationStarted,
@@ -48,6 +82,9 @@ contract Voting is Ownable {
         VotesTallied
     }
     
+    /**
+    * Current state machine state and modifiers for the state machine
+    */
     WorkflowStatus private currentVoteState;    
 
     modifier votesTallied() {
@@ -75,7 +112,9 @@ contract Voting is Ownable {
         _;
     }
 
-
+    /**
+    * Contract code
+    */
 
     constructor() Ownable(msg.sender) {
         currentVoteState = WorkflowStatus.RegisteringVoters;
@@ -92,25 +131,21 @@ contract Voting is Ownable {
         emit WorkflowStatusChange(previousState, currentVoteState);
     }
     
-    function restartVote() external onlyOwner votesTallied {
-        currentVoteState = WorkflowStatus.RegisteringVoters;
-    }
-
     function addVoter(address _address) external onlyOwner registeringVoters {
         voters[_address].isRegistered = true;
         emit VoterRegistered(_address);
     }
 
     function addProposal(string calldata _description) external onlyVoters registeringProposals {
-        proposals.push(Proposal(proposalId, _description, 0));
-        emit ProposalRegistered(proposalId++);
+        proposals.push(Proposal(proposalIdCounter, _description, 0));
+        emit ProposalRegistered(proposalIdCounter++);
     }
 
     function getProposals() external view returns (Proposal[] memory) {
         return proposals;
     }
 
-    function vote(uint _proposalId) external onlyVoters votingProposals VoteOnce {
+    function voteForProposition(uint _proposalId) external onlyVoters votingProposals VoteOnce {
         proposals[_proposalId].voteCount++;
         voters[msg.sender].hasVoted = true;
         voters[msg.sender].votedProposalId = proposals[_proposalId].id;

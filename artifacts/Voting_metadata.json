@@ -242,13 +242,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "restartVote",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -269,13 +262,15 @@
 						"type": "uint256"
 					}
 				],
-				"name": "vote",
+				"name": "voteForProposition",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			}
 		],
 		"devdoc": {
+			"author": "Maxime AUBURTIN",
+			"details": "All corner cases of a vote are not handled in this version also there is no egality, the first vote which has           the maximum voices wins.",
 			"errors": {
 				"OwnableInvalidOwner(address)": [
 					{
@@ -300,11 +295,22 @@
 					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
 				}
 			},
+			"title": "Voting contrat: this contract allow a whitelist of voters to vote for their favorite proposition.",
 			"version": 1
 		},
 		"userdoc": {
+			"events": {
+				"VoterRegistered(address)": {
+					"notice": "Events"
+				}
+			},
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"constructor": {
+					"notice": "Contract code"
+				}
+			},
+			"notice": "You can use this contract for only the most basic simulation",
 			"version": 1
 		}
 	},
@@ -325,11 +331,11 @@
 	},
 	"sources": {
 		"Voting.sol": {
-			"keccak256": "0x097a845365bf6a35f44912ac29d91d2aee3a25b59f673c3669c33b12d23365f7",
+			"keccak256": "0xde55281704801311f99e3dacf6dca254b48c0079ffbb5a218c15289825792a70",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://101a0aa489467a99a8d5735ad96bd5caf172fdd7ffaf909f53ab262d23e7da8b",
-				"dweb:/ipfs/QmNz7QpCGjLJ6n5XeDKeHro9C43pLBKX5VyBd2B2AUDAC1"
+				"bzz-raw://4a4fdce6f479e5481ae0f84e1e0a789af55bfd8d5178f7dcd33b3a3c4d56bba3",
+				"dweb:/ipfs/QmPran6gF1Py44YqZ1t5msXPgJq46nEcgzBL2s8vahNvwG"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {
