@@ -84,7 +84,7 @@ Voici le déroulement de l'ensemble du processus de vote :
   - __All errors are now handled__
   - __Admin cannot be added as a voter__ anymore in order to not influence the vote and in order to not mix responsabilities between admin and voter roles.
   - __Voter can delegate its vote__ to an existing voter or to a new voter. He must use the delegateVote function to do so while the admin is registering voters. Once voters are registered and voters start registering proposition, vote delegation won't be possible anymore.
-  - __Threshold have been added between state machine steps (these figures can be changed using the appropriate modifiers)
+  - Threshold have been added between state machine steps (these figures can be changed using the appropriate modifiers)
       - 3 voters at least are required to validate RegisteringVoters state
       - 2 propositions at least are required to validate ProposalsRegistration state
       - 1 vote at least is required to end VotingSession state
