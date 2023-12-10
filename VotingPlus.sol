@@ -7,10 +7,8 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 *   @title  Voting contrat: this contract allow a whitelist of voters to vote for their favorite proposition.
 *   @author Maxime AUBURTIN
 *   @notice You can use this contract for only the most basic simulation
-*   @dev    All corner cases of a vote are not handled in this version also there is no egality, the first vote which has
-*           the maximum voices wins.
 */
-contract Voting is Ownable {
+contract VotingPlus is Ownable {
 
     /**
     * Events
@@ -19,25 +17,34 @@ contract Voting is Ownable {
     event WorkflowStatusChange(WorkflowStatus previousStatus, WorkflowStatus newStatus);
     event ProposalRegistered(uint proposalId);
     event Voted(address voter, uint proposalId);
+    event VoteEquality(string message);
 
     /**
-    * Id of the winning proposal
+    * Array containing the winner or the winners in case of equality
     */
-    uint private winningProposalId;
+    Proposal[] winners;
+        
 
     /**
     * Voter structure
     */
     struct Voter {
         bool isRegistered;
-        bool hasVoted;
-        uint votedProposalId;
+        uint hasVoted;
+        uint nbVotes;
+        uint[] votedProposalIds;
     }
+  
 
     /**
     * Voters whitelist
     */
     mapping (address => Voter) voters;
+    address[] votersKeys;
+
+    // Some counters
+    uint votersNumber = 0;
+    uint atLeastOneVote = 0;
 
     /**
     * Modifier to allow only voters
@@ -50,8 +57,8 @@ contract Voting is Ownable {
     /**
     * Modifier to only allow a unique vote
     */
-    modifier VoteOnce() {
-        require(voters[msg.sender].hasVoted == false, "You already voted!");
+    modifier voteAsManyTimesAsYoureAllowedTo() {
+        require(voters[msg.sender].hasVoted < voters[msg.sender].nbVotes, "You already used all your votes!");
         _;
     }
 
@@ -68,7 +75,7 @@ contract Voting is Ownable {
     * List of proposals and proposal counter to create proposal id
     */
     Proposal[] proposals;
-    uint proposalIdCounter = 0;
+    uint proposalIdCounter = 0; // used to create proposal Ids
 
     /**
     * Steps of the state machine
@@ -85,53 +92,128 @@ contract Voting is Ownable {
     */
     WorkflowStatus private currentVoteState;    
 
-    modifier votesTallied() {
-        require(currentVoteState == WorkflowStatus.VotesTallied, "Votes need to be tallied in order to do that.");
+    modifier votesTallied() { // This modifier ensure we are at the last step of the state machine
+        require(currentVoteState == WorkflowStatus.VotesTallied, "Votes need to be tallied in order to perform this operation");
         _;
     }
 
-    modifier votesNotTallied() {
-        require(currentVoteState != WorkflowStatus.VotesTallied, "Votes should not be tallied in order to do that.");
+    modifier votesNotTallied() { // This modifier ensure we are not at the last step of the workflow
+        require(currentVoteState != WorkflowStatus.VotesTallied, "Votes have been tallied. It is over. There is no next step!");
         _;
     }
 
-    modifier registeringVoters() {
-        require(currentVoteState == WorkflowStatus.RegisteringVoters, "You cannot register voters.");
+    modifier registeringVoters() { // This modifier ensure we are presently registering voters
+        require(currentVoteState == WorkflowStatus.RegisteringVoters, "You cannot register voters");
         _;
     }
 
-    modifier registeringProposals() {
-        require(currentVoteState == WorkflowStatus.ProposalsRegistration, "You cannot register proposals.");
+    modifier registeringProposals() { // This modifier ensure we are presently registering propositions
+        require(currentVoteState == WorkflowStatus.ProposalsRegistration, "You cannot register proposals");
         _;
     }
 
-    modifier votingProposals() {
-        require(currentVoteState == WorkflowStatus.VotingSession, "You cannot vote proposals.");
+    modifier votingProposals() { // This modifier ensure we are presently voting propositions
+        require(currentVoteState == WorkflowStatus.VotingSession, "You cannot vote proposals");
         _;
     }
 
-    /**
-    * Contract code
-    */
+    modifier votersRegistered(uint nbVoters) { // This modifier ensure we have at least nbVoters voters before moving to the next state of the state machine
+        if (currentVoteState == WorkflowStatus.RegisteringVoters) {
+            require(votersNumber >= nbVoters, "A minimum number of voters are required to continue");
+        }
+        _;
+    }
+
+    modifier proposalRegistered(uint nbProposals) { // This modifier ensure we have at least nbProposals propositions before moving to the next state of the state machine
+        if (currentVoteState == WorkflowStatus.ProposalsRegistration) {
+            require(proposalIdCounter >= nbProposals, "A minimum number of propositions are required to continue");
+        }
+        _;
+    }
+
+    modifier voteRegistered(uint nbVote) { // This modifier ensure we have at least nbVote votes before moving to the next state of the state machine
+        if (currentVoteState == WorkflowStatus.VotingSession) {
+            require(atLeastOneVote >= nbVote, "A minimum number of votes are required to continue");
+        }
+        _;
+    }
+
+
+    /**===================================================================================================================================================================
+    * Smart Contract methods
+    ***=================================================================================================================================================================*/
 
     constructor() Ownable(msg.sender) {
         currentVoteState = WorkflowStatus.RegisteringVoters;
     }
 
 
-    function getVoteStep() external view returns (WorkflowStatus) {
+    function getCurrentVoteStep() external view returns (WorkflowStatus) {
         return currentVoteState;
     }
 
-    function nextVoteStep() external onlyOwner votesNotTallied {
+    function nextVoteStep() external onlyOwner votersRegistered(3) proposalRegistered(2) voteRegistered(1) votesNotTallied {
         WorkflowStatus previousState = currentVoteState;
         currentVoteState = WorkflowStatus(uint(currentVoteState) + 1);
         emit WorkflowStatusChange(previousState, currentVoteState);
     }
-    
-    function addVoter(address _address) external onlyOwner registeringVoters {
-        voters[_address].isRegistered = true;
+
+    function addVoter(address _address) public onlyOwner registeringVoters {
+        require(_address != owner(), "Owner cannot vote!");
+        require(voters[_address].isRegistered == false, "Voter already registered!");
+
+        addVoterInternal(_address);
         emit VoterRegistered(_address);
+    }
+
+    function addVoterInternal(address _address) internal {
+        voters[_address].hasVoted = 0;
+        voters[_address].nbVotes = 1;
+        voters[_address].isRegistered = true;
+        registerVoterKey(_address);
+        
+        votersNumber++;
+    }
+
+    function registerVoterKey(address _voterKey) internal {
+        bool hasKeyBeenFound = false;
+        for (uint i=0; i<votersKeys.length; i++) {
+            if (votersKeys[i] == _voterKey) {
+                hasKeyBeenFound = true;
+            }
+        }
+        if (hasKeyBeenFound == false) {
+            votersKeys.push(_voterKey);
+        }
+    }
+
+    function delegateVote(address _delegate) onlyVoters registeringVoters external {
+
+        // In the case our delegate is already registered as a valid voter
+        if (voters[_delegate].isRegistered) {
+            // We give him an extra voice as a delegate
+            voters[_delegate].nbVotes++;
+        } else {
+            // We add a valid voter to the list
+            addVoterInternal(_delegate);
+        }
+
+        // We delete our current voter
+        deleteVoter(msg.sender);
+
+    }
+
+    function deleteVoter(address _address) internal {
+        voters[_address].isRegistered = false;
+        voters[_address].hasVoted = 0;
+        voters[_address].nbVotes = 1;
+        delete voters[_address].votedProposalIds;
+
+        for (uint i=0; i<votersKeys.length; i++) {
+            if (votersKeys[i] == _address) {
+                votersKeys.pop();
+            }
+        }
     }
 
     function addProposal(string calldata _description) external onlyVoters registeringProposals {
@@ -139,28 +221,91 @@ contract Voting is Ownable {
         emit ProposalRegistered(proposalIdCounter++);
     }
 
-    function getProposals() external view returns (Proposal[] memory) {
+    function listProposals() external view returns (Proposal[] memory) {
+        require(proposals.length > 0, "There are no propositions registered yet!");
         return proposals;
     }
 
-    function voteForProposition(uint _proposalId) external onlyVoters votingProposals VoteOnce {
-        proposals[_proposalId].voteCount++;
-        voters[msg.sender].hasVoted = true;
-        voters[msg.sender].votedProposalId = proposals[_proposalId].id;
+    function voteForProposition(uint _proposalId) external onlyVoters votingProposals voteAsManyTimesAsYoureAllowedTo {
+        require(_proposalId >= 0 && _proposalId < proposals.length, "The proposition you're voting for does not exist!");
 
-        emit Voted(msg.sender, voters[msg.sender].votedProposalId);
+        proposals[_proposalId].voteCount++; // We increment the proposition votes count
+
+        // We increment the number of votes of the voter and we memorize the proposition he voted for
+        voters[msg.sender].hasVoted++;
+        voters[msg.sender].votedProposalIds.push(proposals[_proposalId].id);
+
+        atLeastOneVote++;
+        emit Voted(msg.sender, proposals[_proposalId].id);
+
     }
 
-    function getWinner() external votesTallied returns (Proposal memory) {
+    function getWinner() external votesTallied returns (Proposal[] memory) {
+
         uint maxVoteCount = 0;
+
+        // We collect all the propositions with the biggest score
         for (uint i=0; i<proposals.length; i++) {
             Proposal memory proposal = proposals[i];
             if (proposal.voteCount > maxVoteCount) {
-                winningProposalId = proposal.id;
+                delete winners;
+                winners.push(proposal);
                 maxVoteCount = proposal.voteCount;
+            } else if (proposal.voteCount == maxVoteCount) {
+                winners.push(proposal);
             }
         }
 
-        return proposals[winningProposalId];
+        if (winners.length > 1 ) {
+            emit VoteEquality("You must vote again for one of the propositions which qualified previously!");
+        }
+
+        return winners;
+    }
+
+    function processEquality() external onlyOwner votesTallied {
+        require(winners.length > 1, "There are no equality in results so we don't need to break the tie!");
+
+        proposalIdCounter = winners.length;
+        
+        // We empty our proposals and replace them with the winners
+        delete proposals;
+        proposals = winners;
+
+        // We reinitialize each proposition vote count
+        for (uint i=0; i<proposals.length; i++) {
+            proposals[i].voteCount = 0;
+        }
+
+        // We reinitialize each voters' vote
+        for (uint i=0; i<votersKeys.length; i++) {
+            voters[votersKeys[i]].hasVoted = 0;
+            delete voters[votersKeys[i]].votedProposalIds;
+        }
+        
+        // We rollback the state machine to VotingSession state
+        currentVoteState = WorkflowStatus.VotingSession;
+    }
+
+    function restartVoteFromScratch() external votesTallied onlyOwner {
+
+        // We rollback to the RegisteringVoters state of the state machine
+        currentVoteState = WorkflowStatus.RegisteringVoters;
+
+        // We erase all the propositions
+        proposalIdCounter = 0;
+        delete proposals;
+        
+        // We reinitiate counters
+        votersNumber = 0;
+        atLeastOneVote = 0;
+        
+        // We reinitiate the mapping of voters
+        for (uint i=0; i<votersKeys.length; i++) {
+            delete voters[votersKeys[i]];
+        }
+
+        // We delete memorized voters keys
+        delete votersKeys;
     }
 }

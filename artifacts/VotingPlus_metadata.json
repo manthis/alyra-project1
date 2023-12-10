@@ -114,13 +114,13 @@
 				"inputs": [
 					{
 						"indexed": false,
-						"internalType": "enum Voting.WorkflowStatus",
+						"internalType": "enum VotingPlus.WorkflowStatus",
 						"name": "previousStatus",
 						"type": "uint8"
 					},
 					{
 						"indexed": false,
-						"internalType": "enum Voting.WorkflowStatus",
+						"internalType": "enum VotingPlus.WorkflowStatus",
 						"name": "newStatus",
 						"type": "uint8"
 					}
@@ -155,11 +155,24 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_delegate",
+						"type": "address"
+					}
+				],
+				"name": "delegateVote",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "getCurrentVoteStep",
 				"outputs": [
 					{
-						"internalType": "enum Voting.WorkflowStatus",
+						"internalType": "enum VotingPlus.WorkflowStatus",
 						"name": "",
 						"type": "uint8"
 					}
@@ -189,7 +202,7 @@
 								"type": "uint256"
 							}
 						],
-						"internalType": "struct Voting.Proposal[]",
+						"internalType": "struct VotingPlus.Proposal[]",
 						"name": "",
 						"type": "tuple[]"
 					}
@@ -219,7 +232,7 @@
 								"type": "uint256"
 							}
 						],
-						"internalType": "struct Voting.Proposal[]",
+						"internalType": "struct VotingPlus.Proposal[]",
 						"name": "",
 						"type": "tuple[]"
 					}
@@ -342,7 +355,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"VotingPlus.sol": "Voting"
+			"VotingPlus.sol": "VotingPlus"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -357,11 +370,11 @@
 	},
 	"sources": {
 		"VotingPlus.sol": {
-			"keccak256": "0xc7533daa8c2539bb822f863fcc81de1e540bcf9bbdcae250b7b35649b55ffb16",
+			"keccak256": "0x884757b58de128a606e58dd4bc68fd0cf8f6cb96bccaa0a098a2fa6b0a41d32b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://3194dc5f48e00f5a9ffef8274cff8507236e406fdddf05ce8d24555d02beb287",
-				"dweb:/ipfs/QmdzVX5pk9FmNig9WiQsr9mjskHtbe6tn5Mr8kXmXPtaKC"
+				"bzz-raw://9d197686842778ff38986ce1ef27a1a94188510d3a265c89a78d6e57ee1871ec",
+				"dweb:/ipfs/QmXyJFPyAkcuzAoDMsEAnjBh5qr12eAACYD9uaFPEtK7S7"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {

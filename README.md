@@ -82,16 +82,17 @@ Voici le déroulement de l'ensemble du processus de vote :
 
   - Handle equality: two propositions cannot be equal, if we find an equality we must vote again but for the equal propositions only
   - Handle errors: vote for an non existing proposition, move to a state of the state machine which does not exist, etc.
-  - Admin should not be able to be a voter
-  - We should not be able to pass to next machine state if we don't have voters, if we don't have proposals or if we don't have votes
+  - Admin should not be able to be a voter and vote
+  - We should not be able to pass to next machine state if we don't have 3 voters after registering voters, if we don't have 2 propositions after registering propositions 
+    or if we don't have at least 1 vote when registering votes (these figures can of course be changed)
   - We should remove states which are useless from the state machine
   - We should only be able to vote once
   - A voter should be able to delegate its vote
-  - A voter should be able to cancel or modify its vote
-  - A voter should be able to emit a blank vote
-  - People should be able to count for themselves and see if the result of the vote is true
+  - People should be able to count for themselves and see if the results of the vote is true
   - A voter should not be able to vote for a proposition which does not exist
   - Once the vote is complete we should be able to reinstanciate a new voting session
 
   
   👉 We have implemented all theses additional feature in the VotingPlus.sol file. Please look at it.
+
+  ## Exemple of voting session

@@ -93,7 +93,7 @@ contract Voting is Ownable {
     }
 
     modifier votesNotTallied() {
-        require(currentVoteState != WorkflowStatus.VotesTallied, "Votes should not be tallied in order to do that.");
+        require(currentVoteState != WorkflowStatus.VotesTallied, "Votes have been tallied. It is over. There is no next step!");
         _;
     }
 
@@ -139,10 +139,6 @@ contract Voting is Ownable {
     function addProposal(string calldata _description) external onlyVoters registeringProposals {
         proposals.push(Proposal(proposalIdCounter, _description, 0));
         emit ProposalRegistered(proposalIdCounter++);
-    }
-
-    function getProposals() external view returns (Proposal[] memory) {
-        return proposals;
     }
 
     function voteForProposition(uint _proposalId) external onlyVoters votingProposals VoteOnce {
