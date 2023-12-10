@@ -316,7 +316,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Voting.sol": "Voting"
+			"VotingPlus.sol": "Voting"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -330,12 +330,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"Voting.sol": {
-			"keccak256": "0xde55281704801311f99e3dacf6dca254b48c0079ffbb5a218c15289825792a70",
+		"VotingPlus.sol": {
+			"keccak256": "0xd62ff0a28d1c9bf05baa05dd6fc99c962eafc63104b4e573262f1447c58ce800",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4a4fdce6f479e5481ae0f84e1e0a789af55bfd8d5178f7dcd33b3a3c4d56bba3",
-				"dweb:/ipfs/QmPran6gF1Py44YqZ1t5msXPgJq46nEcgzBL2s8vahNvwG"
+				"bzz-raw://2e0149d8f848e8de9aa125f1ef8ab5fff4d96c7fdccc6191d40250c5cdd0a68a",
+				"dweb:/ipfs/QmWiKqdGtJmuNZYaXw1qdavVE2BnY2uC8SQJDfojbjPRXo"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {

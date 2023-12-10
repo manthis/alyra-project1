@@ -70,8 +70,7 @@ Voici le déroulement de l'ensemble du processus de vote :
   2. I then implemented the different methods in order to fulfill the contract specifications provided above.
 
   
-  👉 Most of the errors are not handled programmatically but left to the EVM. Ex: the state machine doesn't control its bounds. If it is required to move to
-  a step which does not exist (an unknown index of the table), an error occurs and is handled by the EVM.
+  👉 Most of the errors are not handled programmatically but left to the EVM. Ex:
 
 
   👉 Concerning winners: this smart contract does not handle equality between propositions and will select the first one with the highest score as the winner.
@@ -80,7 +79,7 @@ Voici le déroulement de l'ensemble du processus de vote :
   ## Identified issues with a voting contract
 
   Below is a list of all the corner cases of a vote we would need to handle to make this contract perfect:
-  
+
   - Handle equality: two propositions cannot be equal, if we find an equality we must vote again but for the equal propositions only
   - Handle errors: vote for an non existing proposition, move to a state of the state machine which does not exist, etc.
   - Admin should not be able to be a voter
