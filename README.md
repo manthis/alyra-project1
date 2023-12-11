@@ -76,11 +76,11 @@ Voici le déroulement de l'ensemble du processus de vote :
   
   ## VotingPlus.sol
 
-  To work on a most advanced version of Voting.sol I have created VotingPlus.sol which takes the same basics but adds a few feature to the voting system.
+  To work on a most advanced version of Voting.sol I have created VotingPlus.sol which takes the same basics but adds a few features to the voting system.
 
   Here is a list of added features:
 
-  - __The smart contract handles equality__. In this version of the smart contract, several proposition can be ex equo. Thus they will be listed when calling tailVotes function. 
+  - __The smart contract handles equality__. In this version of the smart contract, several proposition can be ex aequo. Thus they will be listed when calling tailVotes function. 
     In order to solve this equality between propositions, the admin will have :
     - to call solveEqualityWithVote contract method. The solveEqualityWithVote method will reset the votes, remove all the propositions but those which are equal, and voters will be able to vote again to break the tie. 
     - to call solveEqualityWithTimestamp contract method: will choose as the winning proposition, the proposition which has the smallest timestamp (which is the oldest).
@@ -93,7 +93,7 @@ Voici le déroulement de l'ensemble du processus de vote :
       - 1 vote at least is required to end VotingSession state
   - __Useless states have been removed__
   - __Voters can only vote once__ unless another voter delegated them a voice
-  - Propositions can be listed (id, description, voteCount)
+  - Propositions can be listed (id, description, voteCount, lastVoteTimestamp)
   - Once the vote workflow is complete we can now start a new vote using restartVoteWorkflow.
 
 
