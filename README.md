@@ -93,7 +93,7 @@ Voici le déroulement de l'ensemble du processus de vote :
       - 1 vote at least is required to end VotingSession state
   - __Useless states have been removed__
   - __Voters can only vote once__ unless another voter delegated them a voice
-  - Propositions can be listed (id, description, voteCount)
+  - Propositions can be listed (id, description, voteCount, lastVoteTimestamp)
   - Once the vote workflow is complete we can now start a new vote using restartVoteWorkflow.
 
 
