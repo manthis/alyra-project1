@@ -18,7 +18,6 @@ contract VotingPlus is Ownable {
     event Voted(address voter, uint proposalId);
     event VoteEquality(string message);
 
-//TODO
     /**
     * Id of the winning proposal
     */
