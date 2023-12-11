@@ -80,7 +80,10 @@ Voici le déroulement de l'ensemble du processus de vote :
 
   Here is a list of added features:
 
-  - __The smart contract handles equality__. In this version of the smart contract, several proposition can be ex equo. Thus they will be listed when calling getWinner function. In order to solve this equality, the admin will have to call processEquality contract method. The processEquality method will reset the votes, remove all the propositions but those which are equal, and voters will be able to vote again to break the tie.
+  - __The smart contract handles equality__. In this version of the smart contract, several proposition can be ex equo. Thus they will be listed when calling tailVotes function. 
+    In order to solve this equality between propositions, the admin will have :
+    - to call solveEqualityWithVote contract method. The solveEqualityWithVote method will reset the votes, remove all the propositions but those which are equal, and voters will be able to vote again to break the tie. 
+    - to call solveEqualityWithTimestamp contract method: will choose as the winning proposition, the proposition which has the smallest timestamp (which is the oldest).
   - __All errors are now handled__
   - __Admin cannot be added as a voter__ anymore in order to not influence the vote and in order to not mix responsabilities between admin and voter roles.
   - __Voter can delegate its vote__ to an existing voter or to a new voter. He must use the delegateVote function to do so while the admin is registering voters. Once voters are registered and voters start registering proposition, vote delegation won't be possible anymore.
@@ -92,6 +95,7 @@ Voici le déroulement de l'ensemble du processus de vote :
   - __Voters can only vote once__ unless another voter delegated them a voice
   - Propositions can be listed (id, description, voteCount)
   - Once the vote workflow is complete we can now start a new vote using restartVoteWorkflow.
+
 
   ## Source code
 

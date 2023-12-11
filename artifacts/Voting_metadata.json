@@ -69,19 +69,6 @@
 				"inputs": [
 					{
 						"indexed": false,
-						"internalType": "string",
-						"name": "message",
-						"type": "string"
-					}
-				],
-				"name": "VoteEquality",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
 						"internalType": "address",
 						"name": "voter",
 						"type": "address"
@@ -156,7 +143,7 @@
 			},
 			{
 				"inputs": [],
-				"name": "getCurrentVoteStep",
+				"name": "getVoteStep",
 				"outputs": [
 					{
 						"internalType": "enum Voting.WorkflowStatus",
@@ -189,42 +176,12 @@
 								"type": "uint256"
 							}
 						],
-						"internalType": "struct Voting.Proposal[]",
+						"internalType": "struct Voting.Proposal",
 						"name": "",
-						"type": "tuple[]"
+						"type": "tuple"
 					}
 				],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "listProposals",
-				"outputs": [
-					{
-						"components": [
-							{
-								"internalType": "uint256",
-								"name": "id",
-								"type": "uint256"
-							},
-							{
-								"internalType": "string",
-								"name": "description",
-								"type": "string"
-							},
-							{
-								"internalType": "uint256",
-								"name": "voteCount",
-								"type": "uint256"
-							}
-						],
-						"internalType": "struct Voting.Proposal[]",
-						"name": "",
-						"type": "tuple[]"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -249,21 +206,7 @@
 			},
 			{
 				"inputs": [],
-				"name": "processEquality",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "renounceOwnership",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "restartVoteFromScratch",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -297,6 +240,7 @@
 		],
 		"devdoc": {
 			"author": "Maxime AUBURTIN",
+			"details": "All corner cases of a vote are not handled in this version also there is no egality, the first vote which has           the maximum voices wins.",
 			"errors": {
 				"OwnableInvalidOwner(address)": [
 					{
@@ -333,7 +277,7 @@
 			"kind": "user",
 			"methods": {
 				"constructor": {
-					"notice": "=================================================================================================================================================================== Smart Contract methods***================================================================================================================================================================="
+					"notice": "Contract code"
 				}
 			},
 			"notice": "You can use this contract for only the most basic simulation",
@@ -342,7 +286,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"VotingPlus.sol": "Voting"
+			"Voting.sol": "Voting"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -356,12 +300,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"VotingPlus.sol": {
-			"keccak256": "0xc7533daa8c2539bb822f863fcc81de1e540bcf9bbdcae250b7b35649b55ffb16",
+		"Voting.sol": {
+			"keccak256": "0x15e5032ddeaac9b2ea9d7eab025b55b9ffae59566c894f83c7daa03b8aef24ea",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://3194dc5f48e00f5a9ffef8274cff8507236e406fdddf05ce8d24555d02beb287",
-				"dweb:/ipfs/QmdzVX5pk9FmNig9WiQsr9mjskHtbe6tn5Mr8kXmXPtaKC"
+				"bzz-raw://b6e66e6c8f1c3f6ce92007d98c76b25d92d88dcd8211ff74c42ebe60e1b7652e",
+				"dweb:/ipfs/QmYAmCqeWirQcizmS4QcJdFM8YSi1McSJXx9JsfCLPms72"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {

@@ -18,6 +18,12 @@ contract VotingPlus is Ownable {
     event Voted(address voter, uint proposalId);
     event VoteEquality(string message);
 
+//TODO
+    /**
+    * Id of the winning proposal
+    */
+    int private winningProposalId = -1;
+
     /**
     * Array containing the winner or the winners in case of equality
     */
@@ -36,7 +42,7 @@ contract VotingPlus is Ownable {
   
 
     /**
-    * Voters whitelist
+    * Voters whitelist and array to store keys
     */
     mapping (address => Voter) voters;
     address[] votersKeys;
@@ -68,6 +74,7 @@ contract VotingPlus is Ownable {
         uint id;
         string description;
         uint voteCount;
+        uint lastVoteTimestamp;
     }
 
     /**
@@ -97,7 +104,7 @@ contract VotingPlus is Ownable {
     }
 
     modifier votesNotTallied() { // This modifier ensure we are not at the last step of the workflow
-        require(currentVoteState != WorkflowStatus.VotesTallied, "Votes have been tallied. It is over. There is no next step!");
+        require(currentVoteState != WorkflowStatus.VotesTallied, "Votes have to be tallied. It is over. There is no next step!");
         _;
     }
 
@@ -146,18 +153,26 @@ contract VotingPlus is Ownable {
         currentVoteState = WorkflowStatus.RegisteringVoters;
     }
 
-
+    /**
+    *   @notice Returns the current step of the state machine
+    */
     function getCurrentVoteStep() external view returns (WorkflowStatus) {
         return currentVoteState;
     }
 
+    /**
+    *   @notice Move the state machine to its next state if constraints brought by modifiers are fullfilled
+    */
     function nextVoteStep() external onlyOwner votersRegistered(3) proposalRegistered(2) voteRegistered(1) votesNotTallied {
         WorkflowStatus previousState = currentVoteState;
         currentVoteState = WorkflowStatus(uint(currentVoteState) + 1);
         emit WorkflowStatusChange(previousState, currentVoteState);
     }
 
-    function addVoter(address _address) public onlyOwner registeringVoters {
+    /**
+    *   @notice this external addVoter function allows to add a new voter to the whitelist
+    */
+    function addVoter(address _address) external onlyOwner registeringVoters {
         require(_address != owner(), "Owner cannot vote!");
         require(voters[_address].isRegistered == false, "Voter already registered!");
 
@@ -165,6 +180,9 @@ contract VotingPlus is Ownable {
         emit VoterRegistered(_address);
     }
 
+    /**
+    *   @notice this internal addVoter function allows to add a new voter to the whitelist 
+    */
     function addVoterInternal(address _address) internal {
         voters[_address].hasVoted = 0;
         voters[_address].nbVotes = 1;
@@ -174,6 +192,9 @@ contract VotingPlus is Ownable {
         votersNumber++;
     }
 
+    /**
+    *   @notice Internal function to register voters' keys when adding a new voter
+    */
     function registerVoterKey(address _voterKey) internal {
         bool hasKeyBeenFound = false;
         for (uint i=0; i<votersKeys.length; i++) {
@@ -186,6 +207,10 @@ contract VotingPlus is Ownable {
         }
     }
 
+    /**
+    *   @notice This method allows a voter to delegate its vote to an existing or to a new voter
+    *   @param _delegate The adresse to delegate the vote to
+    */
     function delegateVote(address _delegate) onlyVoters registeringVoters external {
 
         // In the case our delegate is already registered as a valid voter
@@ -202,6 +227,9 @@ contract VotingPlus is Ownable {
 
     }
 
+    /**
+    *   @notice This internal method allows to delete a voter
+    */
     function deleteVoter(address _address) internal {
         voters[_address].isRegistered = false;
         voters[_address].hasVoted = 0;
@@ -215,20 +243,33 @@ contract VotingPlus is Ownable {
         }
     }
 
+    /**
+    *   @notice This method allows to create a new proposition
+    *   @param _description The content of the proposition to be voted
+    */
     function addProposal(string calldata _description) external onlyVoters registeringProposals {
-        proposals.push(Proposal(proposalIdCounter, _description, 0));
+        proposals.push(Proposal(proposalIdCounter, _description, 0, 0));
         emit ProposalRegistered(proposalIdCounter++);
     }
 
+    /**
+    *   @notice This method allows to list all registered propositions
+    *   @return An array of proposals
+    */
     function listProposals() external view returns (Proposal[] memory) {
         require(proposals.length > 0, "There are no propositions registered yet!");
         return proposals;
     }
 
+    /**
+    *   @notice This method allows to vote for a proposition by its id
+    *   @param _proposalId The if of the proposition to vote for
+    */
     function voteForProposition(uint _proposalId) external onlyVoters votingProposals voteAsManyTimesAsYoureAllowedTo {
         require(_proposalId >= 0 && _proposalId < proposals.length, "The proposition you're voting for does not exist!");
 
         proposals[_proposalId].voteCount++; // We increment the proposition votes count
+        proposals[_proposalId].lastVoteTimestamp = block.timestamp; // We keep the timestamp of the vote
 
         // We increment the number of votes of the voter and we memorize the proposition he voted for
         voters[msg.sender].hasVoted++;
@@ -239,7 +280,12 @@ contract VotingPlus is Ownable {
 
     }
 
-    function getWinner() external votesTallied returns (Proposal[] memory) {
+    /**
+    *   @notice This method will tail the Votes and return an array containing one or more winners. In case there is only one winner
+    *           its id will be recorded as the winning proposition in winningProposalId which can be retrieved through the getWinner
+    *           function.
+    */
+    function tailVotes() external votesTallied returns (Proposal[] memory) {
 
         uint maxVoteCount = 0;
 
@@ -257,12 +303,18 @@ contract VotingPlus is Ownable {
 
         if (winners.length > 1 ) {
             emit VoteEquality("You must vote again for one of the propositions which qualified previously!");
+        } else {
+            winningProposalId = int(winners[0].id); // We record the id of the winning proposition
         }
 
         return winners;
     }
 
-    function processEquality() external onlyOwner votesTallied {
+    /**
+    *   @notice This method will solve a situation of equality between proposals by creating a voting session only for these 
+    *           propositions which got the same number of votes. Vote will take the same shape until there is one unique winner.
+    */
+    function solveEqualityWithVote() external onlyOwner votesTallied {
         require(winners.length > 1, "There are no equality in results so we don't need to break the tie!");
 
         proposalIdCounter = winners.length;
@@ -286,6 +338,29 @@ contract VotingPlus is Ownable {
         currentVoteState = WorkflowStatus.VotingSession;
     }
 
+    /**
+    *   @notice This method will solve a situtation of equality between proposals by looking for the oldest voted proposition.
+    *           It is this one which will be designated as the winner and its id stored in winningProposalId
+    */
+    function solveEqualityWithTimestamp() external onlyOwner votesTallied {
+        require(winners.length > 1, "There are no equality in results so we don't need to break the tie!");
+
+        uint smallestTimestamp = block.timestamp;
+        Proposal memory winner;
+        for(uint i=0; i<winners.length; i++) {
+            if (winners[i].lastVoteTimestamp != 0 && winners[i].lastVoteTimestamp < smallestTimestamp) {
+                winner = winners[i];
+                smallestTimestamp = winner.lastVoteTimestamp;
+            }
+        }
+
+        // We record the id of the winning proposition
+        winningProposalId = int(winner.id);        
+    }
+
+    /**
+    *   @notice This method allows to restart the whole voting session once votes are tallied
+    */
     function restartVoteFromScratch() external votesTallied onlyOwner {
 
         // We rollback to the RegisteringVoters state of the state machine
@@ -307,4 +382,13 @@ contract VotingPlus is Ownable {
         // We delete memorized voters keys
         delete votersKeys;
     }
+
+    /**
+    *   @notice This method returns the winning proposition once votes have been tallied and equality issues solved
+    */
+    function getWinner() external view returns (int) {
+        require(winningProposalId >=0, "There is no winning proposition yet!");
+        return winningProposalId;
+    }
+
 }
