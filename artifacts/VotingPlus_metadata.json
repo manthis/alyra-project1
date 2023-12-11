@@ -69,6 +69,19 @@
 				"inputs": [
 					{
 						"indexed": false,
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "VoteEquality",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
 						"internalType": "address",
 						"name": "voter",
 						"type": "address"
@@ -101,13 +114,13 @@
 				"inputs": [
 					{
 						"indexed": false,
-						"internalType": "enum Voting.WorkflowStatus",
+						"internalType": "enum VotingPlus.WorkflowStatus",
 						"name": "previousStatus",
 						"type": "uint8"
 					},
 					{
 						"indexed": false,
-						"internalType": "enum Voting.WorkflowStatus",
+						"internalType": "enum VotingPlus.WorkflowStatus",
 						"name": "newStatus",
 						"type": "uint8"
 					}
@@ -142,11 +155,24 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_delegate",
+						"type": "address"
+					}
+				],
+				"name": "delegateVote",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
-				"name": "getVoteStep",
+				"name": "getCurrentVoteStep",
 				"outputs": [
 					{
-						"internalType": "enum Voting.WorkflowStatus",
+						"internalType": "enum VotingPlus.WorkflowStatus",
 						"name": "",
 						"type": "uint8"
 					}
@@ -157,6 +183,19 @@
 			{
 				"inputs": [],
 				"name": "getWinner",
+				"outputs": [
+					{
+						"internalType": "int256",
+						"name": "",
+						"type": "int256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "listProposals",
 				"outputs": [
 					{
 						"components": [
@@ -174,14 +213,19 @@
 								"internalType": "uint256",
 								"name": "voteCount",
 								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lastVoteTimestamp",
+								"type": "uint256"
 							}
 						],
-						"internalType": "struct Voting.Proposal",
+						"internalType": "struct VotingPlus.Proposal[]",
 						"name": "",
-						"type": "tuple"
+						"type": "tuple[]"
 					}
 				],
-				"stateMutability": "nonpayable",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -208,6 +252,62 @@
 				"inputs": [],
 				"name": "renounceOwnership",
 				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "restartVoteFromScratch",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "solveEqualityWithTimestamp",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "solveEqualityWithVote",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "tailVotes",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "voteCount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lastVoteTimestamp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct VotingPlus.Proposal[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -240,7 +340,6 @@
 		],
 		"devdoc": {
 			"author": "Maxime AUBURTIN",
-			"details": "All corner cases of a vote are not handled in this version also there is no egality, the first vote which has           the maximum voices wins.",
 			"errors": {
 				"OwnableInvalidOwner(address)": [
 					{
@@ -255,6 +354,21 @@
 			},
 			"kind": "dev",
 			"methods": {
+				"addProposal(string)": {
+					"params": {
+						"_description": "The content of the proposition to be voted"
+					}
+				},
+				"delegateVote(address)": {
+					"params": {
+						"_delegate": "The adresse to delegate the vote to"
+					}
+				},
+				"listProposals()": {
+					"returns": {
+						"_0": "An array of proposals"
+					}
+				},
 				"owner()": {
 					"details": "Returns the address of the current owner."
 				},
@@ -263,6 +377,11 @@
 				},
 				"transferOwnership(address)": {
 					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				},
+				"voteForProposition(uint256)": {
+					"params": {
+						"_proposalId": "The if of the proposition to vote for"
+					}
 				}
 			},
 			"title": "Voting contrat: this contract allow a whitelist of voters to vote for their favorite proposition.",
@@ -276,17 +395,52 @@
 			},
 			"kind": "user",
 			"methods": {
+				"addProposal(string)": {
+					"notice": "This method allows to create a new proposition"
+				},
+				"addVoter(address)": {
+					"notice": "this external addVoter function allows to add a new voter to the whitelist"
+				},
 				"constructor": {
-					"notice": "Contract code"
+					"notice": "=================================================================================================================================================================== Smart Contract methods***================================================================================================================================================================="
+				},
+				"delegateVote(address)": {
+					"notice": "This method allows a voter to delegate its vote to an existing or to a new voter"
+				},
+				"getCurrentVoteStep()": {
+					"notice": "Returns the current step of the state machine"
+				},
+				"getWinner()": {
+					"notice": "This method returns the winning proposition once votes have been tallied and equality issues solved"
+				},
+				"listProposals()": {
+					"notice": "This method allows to list all registered propositions"
+				},
+				"nextVoteStep()": {
+					"notice": "Move the state machine to its next state if constraints brought by modifiers are fullfilled"
+				},
+				"restartVoteFromScratch()": {
+					"notice": "This method allows to restart the whole voting session once votes are tallied"
+				},
+				"solveEqualityWithTimestamp()": {
+					"notice": "This method will solve a situtation of equality between proposals by looking for the oldest voted proposition.           It is this one which will be designated as the winner and its id stored in winningProposalId"
+				},
+				"solveEqualityWithVote()": {
+					"notice": "This method will solve a situation of equality between proposals by creating a voting session only for these            propositions which got the same number of votes. Vote will take the same shape until there is one unique winner."
+				},
+				"tailVotes()": {
+					"notice": "This method will tail the Votes and return an array containing one or more winners. In case there is only one winner           its id will be recorded as the winning proposition in winningProposalId which can be retrieved through the getWinner           function."
+				},
+				"voteForProposition(uint256)": {
+					"notice": "This method allows to vote for a proposition by its id"
 				}
 			},
-			"notice": "You can use this contract for only the most basic simulation",
 			"version": 1
 		}
 	},
 	"settings": {
 		"compilationTarget": {
-			"Voting.sol": "Voting"
+			"VotingPlus.sol": "VotingPlus"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -300,12 +454,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"Voting.sol": {
-			"keccak256": "0x15e5032ddeaac9b2ea9d7eab025b55b9ffae59566c894f83c7daa03b8aef24ea",
+		"VotingPlus.sol": {
+			"keccak256": "0x6249f7af45b0b96875e3e4be16234c139819dd821b25bf71a0f1c2d63b329d0c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b6e66e6c8f1c3f6ce92007d98c76b25d92d88dcd8211ff74c42ebe60e1b7652e",
-				"dweb:/ipfs/QmYAmCqeWirQcizmS4QcJdFM8YSi1McSJXx9JsfCLPms72"
+				"bzz-raw://93117617bea88859be9c6889a1b7cd7573a91d3f78504237e023af409eb4f289",
+				"dweb:/ipfs/QmbjobcpgmcGEVTp9QFkeSxAX1LHj1dWsu3fSNYqb8cYcQ"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol": {
