@@ -381,6 +381,9 @@ contract VotingPlus is Ownable {
 
         // We delete memorized voters keys
         delete votersKeys;
+
+        // We remove the winner id
+        winningProposalId = -1;
     }
 
     /**
